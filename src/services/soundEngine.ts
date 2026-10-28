@@ -1,6 +1,11 @@
 // Professional High-Fidelity Audio Engine for Bé Đỗ Minh Hoàng (Bé Ong)
-// Plays real authentic MP3 audio for animals, soft warm synthesizer for clicks/pops,
-// and strictly protects against broken English-voice text-to-speech.
+// Features:
+// 1. VieNeu-TTS Studio Vietnamese Voice (Quỳnh Anh — Nữ · Bắc · Phong cách đọc truyện)
+// 2. Real authentic MP3 audio for animals
+// 3. Tactile synthesized web audio for clicks, pops, xylophone notes
+// 4. iOS / iPad Safari touch activation
+
+import { playVieNeuSpeech, prewarmCommonPhrases } from './vieneuTtsService';
 
 let audioCtx: AudioContext | null = null;
 let isMuted = false;
@@ -62,6 +67,8 @@ export function unlockAudioOnFirstTouch() {
       source.buffer = buffer;
       source.connect(ctx.destination);
       source.start(0);
+      // Prewarm common toddler phrases on VieNeu-TTS in the background
+      prewarmCommonPhrases();
     } catch {
       // Silently ignore
     }
@@ -342,44 +349,46 @@ export const soundEngine = {
   },
 
   // Natural Vietnamese Voice Praise:
-  // CRITICAL FIX: Only speak if a genuine Vietnamese voice is present on the OS!
-  // If no Vietnamese voice exists, NEVER let an English robotic voice read Vietnamese words!
+  // Powered by VieNeu-TTS (https://vieneu-tts.cahy.io.vn) with voice:
+  // "Quỳnh Anh — Nữ · Bắc · Phong cách đọc truyện"
   speakVietnamese(text: string) {
     if (isMuted || !isVoiceEnabled) return;
-    if (!('speechSynthesis' in window)) return;
 
     const now = Date.now();
-    // Debounce speech by 1.2s to prevent stutter and queue choke when toddler taps rapidly
-    if (now - lastSpeechTime < 1200) {
+    // Debounce speech by 600ms to prevent stutter when toddler taps rapidly
+    if (now - lastSpeechTime < 600) {
       return;
     }
     lastSpeechTime = now;
 
-    try {
-      const voices = window.speechSynthesis.getVoices();
-      // Look for a verified Vietnamese voice
-      const viVoice = voices.find((v) => {
-        const lang = (v.lang || '').toLowerCase().replace('_', '-');
-        return lang.startsWith('vi');
-      });
+    // 1. Primary Engine: VieNeu-TTS Studio Quality AI Voice
+    playVieNeuSpeech(text).catch(() => {
+      // 2. Secondary Fallback: OS Vietnamese Voice if available
+      try {
+        if ('speechSynthesis' in window) {
+          const voices = window.speechSynthesis.getVoices();
+          const viVoice = voices.find((v) => {
+            const lang = (v.lang || '').toLowerCase().replace('_', '-');
+            return lang.startsWith('vi');
+          });
 
-      // IF NO VIETNAMESE VOICE EXISTS ON THE MACHINE, DO NOT SPEAK!
-      // This eliminates the robotic, distorted English accent reading Vietnamese words!
-      if (!viVoice) {
-        // Play a sweet, pleasant chime instead of broken robot audio
-        this.playPop(1.4);
-        return;
+          if (viVoice) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = viVoice;
+            utterance.lang = 'vi-VN';
+            utterance.rate = 0.9;
+            utterance.pitch = 1.15;
+            window.speechSynthesis.speak(utterance);
+            return;
+          }
+        }
+      } catch {
+        // Fallback
       }
 
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = viVoice;
-      utterance.lang = 'vi-VN';
-      utterance.rate = 0.9;
-      utterance.pitch = 1.15;
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // Fallback silently
-    }
+      // 3. Final Fallback: Pleasant chime cue (never robot noise)
+      this.playPop(1.4);
+    });
   },
 };

@@ -49,13 +49,17 @@ Tuân thủ nghiêm ngặt 3 tiêu chuẩn thiết kế cao cấp:
 
 ---
 
-## 4. HỆ THỐNG ÂM THANH NỘI BỘ (WEB AUDIO SOUND ENGINE)
-Không phụ thuộc file mp3 ngoài dễ bị lỗi mạng:
-- **Tiếng bong bóng vỡ (Pop Sound):** Dao động sine tần số cao tụt nhanh tạo tiếng "pốp" giòn tan.
-- **Đàn Xylophone 8 nốt chuẩn:** Tần số C4 (261.63Hz) đến C5 (523.25Hz) với âm sắc mộc chuông gõ.
-- **Tiếng chúc mừng (Win Fanfare):** Hợp âm Major arpeggio vui vẻ khi bé hoàn thành trò chơi.
-- **Tiếng kêu các loài vật:** Bộ tổng hợp tiếng Vịt, Cún, Mèo, Bò, Ếch, Gà.
-- **Trợ lý giọng nói (Web Speech API):** Phát âm tiếng Việt chuẩn gọi tên bé: *"Chào bé Đỗ Minh Hoàng! Bé Ong giỏi quá!"*.
+## 4. HỆ THỐNG ÂM THANH NỘI BỘ & AI TTS (HIGH-FIDELITY SOUND & VIENEU-TTS ENGINE)
+- **Giọng đọc AI Cao Cấp (VieNeu-TTS Studio Quality):**
+  - **Server API:** [https://vieneu-tts.cahy.io.vn/](https://vieneu-tts.cahy.io.vn/)
+  - **Giọng đọc chuẩn:** `Quỳnh Anh — Nữ · Bắc · Phong cách đọc truyện` (Truyền cảm, ấm áp, giọng kể chuyện thiếu nhi tự nhiên 48,000Hz).
+  - **Tích hợp:** `@gradio/client` qua endpoint `/wrapper`, có bộ nhớ đệm `audioCache` trong RAM giúp phát tức thì 0ms các câu khen ngợi của bé Đỗ Minh Hoàng.
+  - **Chế độ Fallback thông minh:** Tự động chuyển qua Web Speech API tiếng Việt hoặc âm chuông vui tươi `pop` nếu mất kết nối mạng.
+- **Tiếng động vật thực tế (Authentic Animal Sounds):**
+  - File MP3 cục bộ trong `/public/audio/`: Vịt (`duck.mp3`), Mèo (`cat.mp3`), Chó (`dog.mp3`), Bò sữa (`cow.mp3`), Ếch (`frog.mp3`), Voi (`elephant.mp3`), Sư tử (`lion.mp3`).
+- **Web Audio Synthesizer:**
+  - Tiếng bóng vỡ (Pop Sound), Đàn Xylophone 8 nốt C4-C5, Tiếng nhạc chúc mừng (Win Fanfare).
+  - Tự động mở khóa âm thanh trên iOS / iPad Safari khi bé chạm lần đầu tiên.
 
 ---
 
