@@ -38,8 +38,6 @@ jobs:
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
-        with:
-          enablement: true
 
       - name: Upload Dist Artifact
         uses: actions/upload-pages-artifact@v3
